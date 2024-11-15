@@ -45,14 +45,17 @@ jobs:
             echo "Cleaning $d..."
             cargo clean
             echo "Calculating $d violations..."
-            nix develop -c cargo clippy --no-deps -- -W clippy::unwrap_used -W clippy::expect_used -W clippy::panic -W clippy::unreachable
-            #echo $VIOLATIONS > violations
+            VIOLATIONS=$(nix develop -c cargo clippy --no-deps -- -W clippy::unwrap_used -W clippy::expect_used -W clippy::panic -W clippy::unreachable 2> >(grep -e "warning: \`panic\`" -e "warning: used" -e "warning: usage of" | wc -l ))
+            echo $VIOLATIONS > violations
             cd ..
           done
-          #SOURCE_VIOLATIONS=$(cat source/violations)
-          #TARGET_VIOLATIONS=$(cat target/violations)
-          #if [ "$SOURCE_VIOLATIONS" -gt "$TARGET_VIOLATIONS" ]; then
-          #  echo "panic/unwrap/expect/unreachable count increased from $TARGET_VIOLATIONS to $SOURCE_VIOLATIONS"
-          #  echo "We want this to decrease, or at least stay the same"
-          #  exit 1
-          #fi
+          SOURCE_VIOLATIONS=$(cat source/violations)
+          TARGET_VIOLATIONS=$(cat target/violations)
+          if [ "$SOURCE_VIOLATIONS" -gt "$TARGET_VIOLATIONS" ]; then
+            echo "panic/unwrap/expect/unreachable count increased from $TARGET_VIOLATIONS to $SOURCE_VIOLATIONS"
+            echo "We want this to decrease, or at least stay the same"
+            exit 1
+          else
+            echo "panic/unwrap/expect/unreachable count decreased from $TARGET_VIOLATIONS to $SOURCE_VIOLATIONS"
+            echo "Great work!"
+          fi
