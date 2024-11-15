@@ -40,7 +40,7 @@ jobs:
             echo "Cleaning $d..."
             cargo clean
             echo "Calculating $d violations..."
-            cargo clippy --no-deps -- -W clippy::unwrap_used -W clippy::expect_used -W clippy::panic -W clippy::unreachable
+            nix develop -c cargo clippy --no-deps -- -W clippy::unwrap_used -W clippy::expect_used -W clippy::panic -W clippy::unreachable
             #echo $VIOLATIONS > violations
             cd ..
           done
