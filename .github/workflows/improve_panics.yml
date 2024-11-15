@@ -13,20 +13,25 @@ concurrency:
 jobs:
   improve-panics:
     name: improve panics
-    runs-on: [self-hosted, i5-4690K]
+    runs-on: [ubuntu-22.04]
     timeout-minutes: 10
     env:
       FORCE_COLOR: 1
       RUST_BACKTRACE: 1
     steps:
-      - name: checkout source
+      # install nix
+      - uses: cachix/install-nix-action@v23
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: checkout source branch in separate directory
         uses: actions/checkout@v4
         with:
           clean: true
           path: source
           ref: ${{ github.ref }}
 
-      - name: checkout target
+      - name: checkout target branch in separate directory
         uses: actions/checkout@v4
         with:
           clean: false
