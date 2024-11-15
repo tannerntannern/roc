@@ -13,7 +13,7 @@ concurrency:
 jobs:
   improve-panics:
     name: improve panics
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: [self-hosted, i5-4690K]
     timeout-minutes: 10
     env:
       FORCE_COLOR: 1
